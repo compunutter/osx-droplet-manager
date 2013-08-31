@@ -8,7 +8,15 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface AppDelegate : NSObject <NSApplicationDelegate>
+@interface AppDelegate : NSObject <NSApplicationDelegate> {
+    // Timer for periodically updating the menu list of servers
+    NSTimer *serverUpdateTimer;
+    // Timer for checking the servers are still up
+    NSTimer *pingUpdateTimer;
+    // Status bar item and menu
+    NSStatusItem *statusItem;
+    NSMenu *dropletMenu;
+}
 
 @property (assign) IBOutlet NSWindow *preferencesWindow;
 

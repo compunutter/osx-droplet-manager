@@ -12,17 +12,39 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    // Insert code here to initialize your application
+    // Create menu
+    [self createMenu];
+    
+    // Create status bar item
+    NSStatusBar *statusBar = [NSStatusBar systemStatusBar];
+    statusItem = [statusBar statusItemWithLength:NSVariableStatusItemLength];
+    
+    [statusItem setHighlightMode:TRUE];
+    [statusItem setTitle:@"DM"]; //To be change to image when avail
+    [statusItem setMenu:dropletMenu];
 }
 
-- (void)createMenu
+- (void) createMenu
 {
-    
+    dropletMenu = [[NSMenu alloc] initWithTitle:@"DropletMenu"];
+    [self resetMenu];
 }
 
 - (void)resetMenu
 {
-    // Create any menu
+    [dropletMenu removeAllItems];
+    
+    NSMenuItem *dropletsItem = [[NSMenuItem alloc] initWithTitle:@"No droplets available" action:NULL keyEquivalent:@""];
+    
+    NSMenuItem *sep = [NSMenuItem separatorItem];
+    
+    NSMenuItem *preferencesItem = [[NSMenuItem alloc] initWithTitle:@"Preferences" action:NULL keyEquivalent:@""];
+    NSMenuItem *quitItem = [[NSMenuItem alloc] initWithTitle:@"Quit" action:NULL keyEquivalent:@""];
+    
+    [dropletMenu addItem:dropletsItem];
+    [dropletMenu addItem:sep];
+    [dropletMenu addItem:preferencesItem];
+    [dropletMenu addItem:quitItem];
 }
 
 @end
