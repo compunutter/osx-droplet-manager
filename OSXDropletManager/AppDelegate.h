@@ -14,10 +14,17 @@
     NSTimer *serverUpdateTimer;
     // Timer for checking the servers are still up
     NSTimer *pingUpdateTimer;
-    // Status bar item and menu
+    //
+    double updateDropletInterval;
+    //
+    double updatePingInterval;
+    // Status bar item
     NSStatusItem *statusItem;
+    //
     NSMenu *dropletMenu;
+    //
     DigitalOceanAPIClient *apiClient;
+    //
     NSMutableArray *droplets;
 }
 

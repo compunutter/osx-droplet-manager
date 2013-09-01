@@ -14,6 +14,10 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    // TODO: Get preferences
+    updateDropletInterval = 3600;
+    updatePingInterval = 900;
+    
     // Create menu
     [self createMenu];
     
@@ -27,6 +31,18 @@
     
     // Initialise API client
     apiClient = [[DigitalOceanAPIClient alloc] initWithClientID:@"4k1rbNDkuD5nfgnjdwiEY" andApiKey:@"E--VAlAf9qNIKoKyp77IAEXguCjDOKpLbVJb3KAr"];
+    
+    // Create timers
+    serverUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:updateDropletInterval target:self selector:@selector(refreshServerList) userInfo:nil repeats:YES];
+    pingUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:updatePingInterval target:self selector:@selector(updateServersPing) userInfo:nil repeats:YES];
+    
+    [self refreshServerList];
+    [self updateServersPing];
+}
+
+- (void)updateServersPing
+{
+    NSLog(@"Ping!");
 }
 
 - (void)refreshServerList
@@ -46,7 +62,18 @@
     // Add new ones to the menu
     for (Droplet *d in droplets)
     {
-        [dropletMenu insertItemWithTitle:d.name action:nil keyEquivalent:@"" atIndex:0];
+        // Submenu
+        NSMenu *submenu = [NSMenu new];
+        [submenu addItemWithTitle:[NSString stringWithFormat:@"IP Address: %@", d.ipAddress] action:nil keyEquivalent:@""];
+        [submenu addItemWithTitle:[NSString stringWithFormat:@"Region: %ld", (long)d.regionId] action:nil keyEquivalent:@""];
+        [submenu addItemWithTitle:[NSString stringWithFormat:@"Backups Active: %@", (d.backupsActive) ? @"Yes" : @"No"] action:nil keyEquivalent:@""];
+        [submenu addItemWithTitle:[NSString stringWithFormat:@"Status: %@", d.status] action:nil keyEquivalent:@""];
+        
+        // Main menu
+        NSMenuItem *dropletMenuItem = [[NSMenuItem alloc] initWithTitle:d.name action:nil keyEquivalent:@""];
+        [dropletMenuItem setSubmenu:submenu];
+        
+        [dropletMenu insertItem:dropletMenuItem atIndex:0];
     }
 }
 

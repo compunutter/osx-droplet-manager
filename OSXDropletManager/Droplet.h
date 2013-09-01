@@ -20,6 +20,6 @@
 @property (readonly) BOOL backupsActive;
 @property (readonly) NSString *ipAddress;
 @property (readonly) BOOL locked;
-@property (readonly) BOOL status;
+@property (readonly) NSString* status;
 
 @end
