@@ -1415,7 +1415,7 @@
 											<object class="NSTextField" id="831254028">
 												<reference key="NSNextResponder" ref="1054178168"/>
 												<int key="NSvFlags">268</int>
-												<string key="NSFrame">{{27, 136}, {55, 17}}</string>
+												<string key="NSFrame">{{6, 136}, {63, 17}}</string>
 												<reference key="NSSuperview" ref="1054178168"/>
 												<reference key="NSWindow"/>
 												<reference key="NSNextKeyView" ref="735436527"/>
@@ -1424,7 +1424,7 @@
 												<object class="NSTextFieldCell" key="NSCell" id="298757183">
 													<int key="NSCellFlags">68157504</int>
 													<int key="NSCellFlags2">272630784</int>
-													<string key="NSContents">API Key:</string>
+													<string key="NSContents">Client ID:</string>
 													<reference key="NSSupport" ref="367661593"/>
 													<string key="NSPlaceholderString"/>
 													<string key="NSCellIdentifier">_NS:1535</string>
@@ -1442,7 +1442,7 @@
 											<object class="NSTextField" id="419855138">
 												<reference key="NSNextResponder" ref="1054178168"/>
 												<int key="NSvFlags">268</int>
-												<string key="NSFrame">{{14, 96}, {68, 17}}</string>
+												<string key="NSFrame">{{14, 96}, {55, 17}}</string>
 												<reference key="NSSuperview" ref="1054178168"/>
 												<reference key="NSWindow"/>
 												<reference key="NSNextKeyView" ref="215518197"/>
@@ -1451,7 +1451,7 @@
 												<object class="NSTextFieldCell" key="NSCell" id="921356326">
 													<int key="NSCellFlags">68157504</int>
 													<int key="NSCellFlags2">272630784</int>
-													<string key="NSContents">Client Key</string>
+													<string key="NSContents">API Key:</string>
 													<reference key="NSSupport" ref="367661593"/>
 													<string key="NSCellIdentifier">_NS:1535</string>
 													<reference key="NSControlView" ref="419855138"/>

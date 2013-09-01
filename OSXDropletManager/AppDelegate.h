@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "DigitalOceanAPIClient.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate> {
     // Timer for periodically updating the menu list of servers
@@ -16,6 +17,8 @@
     // Status bar item and menu
     NSStatusItem *statusItem;
     NSMenu *dropletMenu;
+    DigitalOceanAPIClient *apiClient;
+    NSMutableArray *droplets;
 }
 
 @property (assign) IBOutlet NSWindow *preferencesWindow;

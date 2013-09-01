@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import "DigitalOceanAPIClient.h"
+#import "Droplet.h"
 
 @implementation AppDelegate
 
@@ -20,11 +22,45 @@
     statusItem = [statusBar statusItemWithLength:NSVariableStatusItemLength];
     
     [statusItem setHighlightMode:TRUE];
-    [statusItem setTitle:@"DM"]; //To be change to image when avail
+    [statusItem setTitle:@"DM"]; //To be changed to image when available
     [statusItem setMenu:dropletMenu];
+    
+    // Initialise API client
+    apiClient = [[DigitalOceanAPIClient alloc] initWithClientID:@"4k1rbNDkuD5nfgnjdwiEY" andApiKey:@"E--VAlAf9qNIKoKyp77IAEXguCjDOKpLbVJb3KAr"];
 }
 
-- (void) createMenu
+- (void)refreshServerList
+{
+    // Get the droplets from the API
+    droplets = [apiClient getDroplets];
+    
+    // Clear any existing droplets out of the menu
+    NSInteger sepLocation = [dropletMenu indexOfItemWithTitle:@"Refresh"] - 1;
+    if (sepLocation != 0)
+    {
+        for (int i = 0; i <= sepLocation - 1; i++) {
+            [dropletMenu removeItemAtIndex:i];
+        }
+    }
+    
+    // Add new ones to the menu
+    for (Droplet *d in droplets)
+    {
+        [dropletMenu insertItemWithTitle:d.name action:nil keyEquivalent:@"" atIndex:0];
+    }
+}
+
+- (void)showPreferencesWindows
+{
+    [self.preferencesWindow makeKeyAndOrderFront:self];
+}
+
+- (void)quitApplication
+{
+    [NSApp terminate:self];
+}
+
+- (void)createMenu
 {
     dropletMenu = [[NSMenu alloc] initWithTitle:@"DropletMenu"];
     [self resetMenu];
@@ -34,17 +70,13 @@
 {
     [dropletMenu removeAllItems];
     
-    NSMenuItem *dropletsItem = [[NSMenuItem alloc] initWithTitle:@"No droplets available" action:NULL keyEquivalent:@""];
+    [dropletMenu addItem:[[NSMenuItem alloc] initWithTitle:@"No droplets available" action:NULL keyEquivalent:@""]];
     
-    NSMenuItem *sep = [NSMenuItem separatorItem];
+    [dropletMenu addItem:[NSMenuItem separatorItem]];
     
-    NSMenuItem *preferencesItem = [[NSMenuItem alloc] initWithTitle:@"Preferences" action:NULL keyEquivalent:@""];
-    NSMenuItem *quitItem = [[NSMenuItem alloc] initWithTitle:@"Quit" action:NULL keyEquivalent:@""];
-    
-    [dropletMenu addItem:dropletsItem];
-    [dropletMenu addItem:sep];
-    [dropletMenu addItem:preferencesItem];
-    [dropletMenu addItem:quitItem];
+    [dropletMenu addItem:[[NSMenuItem alloc] initWithTitle:@"Refresh" action:@selector(refreshServerList) keyEquivalent:@""]];
+    [dropletMenu addItem:[[NSMenuItem alloc] initWithTitle:@"Preferences" action:@selector(showPreferencesWindows) keyEquivalent:@""]];
+    [dropletMenu addItem:[[NSMenuItem alloc] initWithTitle:@"Quit" action:@selector(quitApplication) keyEquivalent:@""]];
 }
 
 @end

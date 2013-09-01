@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E17422A17D23D06007C92AC /* DigitalOceanAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E17422917D23D06007C92AC /* DigitalOceanAPIClient.m */; };
+		5E17423217D27943007C92AC /* Droplet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E17423117D27943007C92AC /* Droplet.m */; };
 		5EA7769017D11223009AEAA1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA7768F17D11223009AEAA1 /* Cocoa.framework */; };
 		5EA7769A17D11223009AEAA1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5EA7769817D11223009AEAA1 /* InfoPlist.strings */; };
 		5EA7769C17D11223009AEAA1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EA7769B17D11223009AEAA1 /* main.m */; };
@@ -16,6 +18,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5E17422817D23D06007C92AC /* DigitalOceanAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DigitalOceanAPIClient.h; path = OSXDropletManager/DigitalOceanAPIClient.h; sourceTree = "<group>"; };
+		5E17422917D23D06007C92AC /* DigitalOceanAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DigitalOceanAPIClient.m; path = OSXDropletManager/DigitalOceanAPIClient.m; sourceTree = "<group>"; };
+		5E17423017D27943007C92AC /* Droplet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Droplet.h; path = OSXDropletManager/Droplet.h; sourceTree = "<group>"; };
+		5E17423117D27943007C92AC /* Droplet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Droplet.m; path = OSXDropletManager/Droplet.m; sourceTree = "<group>"; };
 		5EA7768C17D11223009AEAA1 /* OSXDropletManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OSXDropletManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5EA7768F17D11223009AEAA1 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		5EA7769217D11223009AEAA1 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -43,6 +49,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5E17422B17D2756E007C92AC /* DigitalOceanAPIClient */ = {
+			isa = PBXGroup;
+			children = (
+				5E17422F17D27873007C92AC /* Types */,
+				5E17422817D23D06007C92AC /* DigitalOceanAPIClient.h */,
+				5E17422917D23D06007C92AC /* DigitalOceanAPIClient.m */,
+			);
+			name = DigitalOceanAPIClient;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		5E17422F17D27873007C92AC /* Types */ = {
+			isa = PBXGroup;
+			children = (
+				5E17423017D27943007C92AC /* Droplet.h */,
+				5E17423117D27943007C92AC /* Droplet.m */,
+			);
+			name = Types;
+			sourceTree = "<group>";
+		};
 		5EA7768317D11223009AEAA1 = {
 			isa = PBXGroup;
 			children = (
@@ -82,6 +108,7 @@
 		5EA7769517D11223009AEAA1 /* OSXDropletManager */ = {
 			isa = PBXGroup;
 			children = (
+				5E17422B17D2756E007C92AC /* DigitalOceanAPIClient */,
 				5EA776A117D11223009AEAA1 /* AppDelegate.h */,
 				5EA776A217D11223009AEAA1 /* AppDelegate.m */,
 				5EA776A417D11223009AEAA1 /* MainMenu.xib */,
@@ -168,6 +195,8 @@
 			files = (
 				5EA7769C17D11223009AEAA1 /* main.m in Sources */,
 				5EA776A317D11223009AEAA1 /* AppDelegate.m in Sources */,
+				5E17422A17D23D06007C92AC /* DigitalOceanAPIClient.m in Sources */,
+				5E17423217D27943007C92AC /* Droplet.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
