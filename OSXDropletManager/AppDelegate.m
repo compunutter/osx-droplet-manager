@@ -12,11 +12,12 @@
 
 @implementation AppDelegate
 
+@synthesize preferencesWindow;
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    // TODO: Get preferences
-    updateDropletInterval = 3600;
-    updatePingInterval = 900;
+    // Get and load preferences
+    [self loadPreferences];
     
     // Create menu
     [self createMenu];
@@ -30,14 +31,7 @@
     [statusItem setMenu:dropletMenu];
     
     // Initialise API client
-    apiClient = [[DigitalOceanAPIClient alloc] initWithClientID:@"4k1rbNDkuD5nfgnjdwiEY" andApiKey:@"E--VAlAf9qNIKoKyp77IAEXguCjDOKpLbVJb3KAr"];
-    
-    // Create timers
-    serverUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:updateDropletInterval target:self selector:@selector(refreshServerList) userInfo:nil repeats:YES];
-    pingUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:updatePingInterval target:self selector:@selector(updateServersPing) userInfo:nil repeats:YES];
-    
-    [self refreshServerList];
-    [self updateServersPing];
+    [self initialiseWithNewPreferences];
 }
 
 - (void)updateServersPing
@@ -77,9 +71,10 @@
     }
 }
 
-- (void)showPreferencesWindows
+- (void)showPreferencesWindow
 {
-    [self.preferencesWindow makeKeyAndOrderFront:self];
+    [preferencesWindow makeKeyAndOrderFront:self];
+    [preferencesWindow center];
 }
 
 - (void)quitApplication
@@ -102,8 +97,87 @@
     [dropletMenu addItem:[NSMenuItem separatorItem]];
     
     [dropletMenu addItem:[[NSMenuItem alloc] initWithTitle:@"Refresh" action:@selector(refreshServerList) keyEquivalent:@""]];
-    [dropletMenu addItem:[[NSMenuItem alloc] initWithTitle:@"Preferences" action:@selector(showPreferencesWindows) keyEquivalent:@""]];
+    [dropletMenu addItem:[[NSMenuItem alloc] initWithTitle:@"Preferences" action:@selector(showPreferencesWindow) keyEquivalent:@""]];
     [dropletMenu addItem:[[NSMenuItem alloc] initWithTitle:@"Quit" action:@selector(quitApplication) keyEquivalent:@""]];
+}
+
+////////////////////////
+// Prefernces Window //
+//////////////////////
+
+- (IBAction)serverSliderValueChanged:(id)sender { // max 720 = 12 hours
+    NSInteger val = [sender integerValue];
+    if (val < 60) {
+        self.checkServerTimeLabel.stringValue = [NSString stringWithFormat:@"%ld minutes", [sender integerValue]];
+    } else {
+        double hours = floor(val / 60);
+        if (val - hours * 60 == 0) {
+            self.checkServerTimeLabel.stringValue = [NSString stringWithFormat:@"%.0f hours", hours];
+        } else {
+            self.checkServerTimeLabel.stringValue = [NSString stringWithFormat:@"%.0f hours & %.0f minutes", hours, val - (hours * 60)];
+        }
+    }
+}
+
+- (IBAction)pingSliderValueChanged:(id)sender { // max 120 = 2 hours
+    NSInteger val = [sender integerValue];
+    if (val < 60) {
+        self.checkPingTimeLabel.stringValue = [NSString stringWithFormat:@"%ld minutes", [sender integerValue]];
+    } else {
+        double hours = floor(val / 60);
+        if (val - hours * 60 == 0) {
+            self.checkPingTimeLabel.stringValue = [NSString stringWithFormat:@"%.0f hours", hours];
+        } else {
+            self.checkPingTimeLabel.stringValue = [NSString stringWithFormat:@"%.0f hours & %.0f minutes", hours, val - (hours * 60)];
+        }
+    }
+}
+
+- (IBAction)saveAndClosePreferncesWindowButtonPushed:(id)sender {
+    [self savePreferences];
+    [preferencesWindow close];
+}
+
+- (void)savePreferences {
+    [self setVariablesFromPreferences];
+    
+    //TODO: save to file
+}
+
+- (void)loadPreferences {
+    //TODO: get preferences from file
+    
+    [self.checkServerTimeSlider setDoubleValue:60];
+    [self serverSliderValueChanged:self.checkServerTimeSlider];
+    [self.checkPingTimeSlider setDoubleValue:15];
+    [self pingSliderValueChanged:self.checkPingTimeSlider];
+    
+    [self.ClientIDTextField setStringValue:@"4k1rbNDkuD5nfgnjdwiEY"];
+    [self.APIKeyTextField setStringValue:@"E--VAlAf9qNIKoKyp77IAEXguCjDOKpLbVJb3KAr"];
+    
+    [self setVariablesFromPreferences];
+}
+
+- (void)setVariablesFromPreferences {
+    clientId = [self.ClientIDTextField stringValue];
+    apiKey = [self.APIKeyTextField stringValue];
+    updateDropletInterval = [self.checkServerTimeSlider doubleValue];
+    updatePingInterval = [self.checkPingTimeSlider doubleValue];
+}
+
+- (void)initialiseWithNewPreferences {
+    if (!clientId || !apiKey) {
+        [self showPreferencesWindow];
+    } else {
+        apiClient = [[DigitalOceanAPIClient alloc] initWithClientID:@"4k1rbNDkuD5nfgnjdwiEY" andApiKey:@"E--VAlAf9qNIKoKyp77IAEXguCjDOKpLbVJb3KAr"];
+        
+        // Create timers
+        serverUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:updateDropletInterval target:self selector:@selector(refreshServerList) userInfo:nil repeats:YES];
+        pingUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:updatePingInterval target:self selector:@selector(updateServersPing) userInfo:nil repeats:YES];
+        
+        [self refreshServerList];
+        [self updateServersPing];
+    }
 }
 
 @end

@@ -23,11 +23,25 @@
     //
     NSMenu *dropletMenu;
     //
+    NSString *clientId;
+    NSString *apiKey;
+    //
+    //
     DigitalOceanAPIClient *apiClient;
     //
     NSMutableArray *droplets;
 }
 
 @property (assign) IBOutlet NSWindow *preferencesWindow;
+@property (weak) IBOutlet NSTextField *checkServerTimeLabel;
+@property (weak) IBOutlet NSTextField *checkPingTimeLabel;
+@property (weak) IBOutlet NSSlider *checkPingTimeSlider;
+@property (weak) IBOutlet NSTextField *ClientIDTextField;
+@property (weak) IBOutlet NSTextField *APIKeyTextField;
+@property (weak) IBOutlet NSSlider *checkServerTimeSlider;
+
+- (IBAction)serverSliderValueChanged:(id)sender;
+- (IBAction)pingSliderValueChanged:(id)sender;
+- (IBAction)saveAndClosePreferncesWindowButtonPushed:(id)sender;
 
 @end
