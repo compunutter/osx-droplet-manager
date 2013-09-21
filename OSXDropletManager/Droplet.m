@@ -25,6 +25,7 @@
     _regionId = [[droplet objectForKey:@"region_id"] integerValue];
     _backupsActive = [[droplet objectForKey:@"backups_active"] boolValue];
     _ipAddress = [droplet objectForKey:@"ip_address"];
+    _privateIp = [droplet objectForKey:@"private_ip_address"];
     _locked = [[droplet objectForKey:@"locked"] boolValue];
     _status = [droplet objectForKey:@"status"];
     

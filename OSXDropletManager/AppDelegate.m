@@ -58,7 +58,8 @@
     {
         // Submenu
         NSMenu *submenu = [NSMenu new];
-        [submenu addItemWithTitle:[NSString stringWithFormat:@"IP Address: %@", d.ipAddress] action:nil keyEquivalent:@""];
+        [submenu addItemWithTitle:[NSString stringWithFormat:@"Public IP Addr: %@", d.ipAddress] action:nil keyEquivalent:@""];
+        [submenu addItemWithTitle:[NSString stringWithFormat:@"Private IP Addr: %@", ([d.privateIp isEqualTo:[NSNull null]] ? @"N/A" : d.privateIp)] action:nil keyEquivalent:@""];
         [submenu addItemWithTitle:[NSString stringWithFormat:@"Region: %ld", (long)d.regionId] action:nil keyEquivalent:@""];
         [submenu addItemWithTitle:[NSString stringWithFormat:@"Backups Active: %@", (d.backupsActive) ? @"Yes" : @"No"] action:nil keyEquivalent:@""];
         [submenu addItemWithTitle:[NSString stringWithFormat:@"Status: %@", d.status] action:nil keyEquivalent:@""];
@@ -136,33 +137,68 @@
 - (IBAction)saveAndClosePreferncesWindowButtonPushed:(id)sender {
     [self savePreferences];
     [preferencesWindow close];
+    [self initialiseWithNewPreferences];
 }
 
 - (void)savePreferences {
     [self setVariablesFromPreferences];
     
-    //TODO: save to file
+    NSDictionary *settings = [NSDictionary dictionaryWithObjectsAndKeys:
+                              [NSNumber numberWithDouble:[self.checkServerTimeSlider doubleValue]],@"DropletsInterval",
+                              [NSNumber numberWithDouble:[self.checkPingTimeSlider doubleValue]],@"PingInterval",
+                              [NSString stringWithString:[self.ClientIDTextField stringValue]],@"clientID",
+                              [NSString stringWithString:[self.APIKeyTextField stringValue]],@"apiKey",
+                              nil];
+    
+    if (![self settingsFileExist]) {
+        if (![[NSFileManager defaultManager] fileExistsAtPath:[self getSettingsDirectoryPath] isDirectory:NULL]) {
+            [[NSFileManager defaultManager] createDirectoryAtPath:[self getSettingsDirectoryPath] withIntermediateDirectories:TRUE attributes:nil error:nil];
+        }
+        NSLog(@"Wrote settings file: %@",
+              [[NSFileManager defaultManager] createFileAtPath:[self getSettingsFilePath] contents:nil attributes:nil]
+              ? @"yes" : @"no");
+    }
+    
+    bool success = [settings writeToFile:[self getSettingsFilePath] atomically:YES];
+    NSLog(@"Settings file write success: %@", success ? @"yes" : @"no");
 }
 
 - (void)loadPreferences {
-    //TODO: get preferences from file
-    
-    [self.checkServerTimeSlider setDoubleValue:60];
-    [self serverSliderValueChanged:self.checkServerTimeSlider];
-    [self.checkPingTimeSlider setDoubleValue:15];
-    [self pingSliderValueChanged:self.checkPingTimeSlider];
-    
-    [self.ClientIDTextField setStringValue:@"4k1rbNDkuD5nfgnjdwiEY"];
-    [self.APIKeyTextField setStringValue:@"E--VAlAf9qNIKoKyp77IAEXguCjDOKpLbVJb3KAr"];
-    
-    [self setVariablesFromPreferences];
+    if ([self settingsFileExist]) {
+        NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:[self getSettingsFilePath]];
+        
+        [self.checkServerTimeSlider setDoubleValue:[[settings objectForKey:@"DropletsInterval"] doubleValue]];
+        [self serverSliderValueChanged:self.checkServerTimeSlider];
+        [self.checkPingTimeSlider setDoubleValue:[[settings objectForKey:@"PingInterval"] doubleValue]];
+        [self pingSliderValueChanged:self.checkPingTimeSlider];
+        
+        [self.ClientIDTextField setStringValue:[settings objectForKey:@"clientID"]];
+        [self.APIKeyTextField setStringValue:[settings objectForKey:@"apiKey"]];
+        //[self.ClientIDTextField setStringValue:@"4k1rbNDkuD5nfgnjdwiEY"];
+        //[self.APIKeyTextField setStringValue:@"E--VAlAf9qNIKoKyp77IAEXguCjDOKpLbVJb3KAr"];
+        
+        [self setVariablesFromPreferences];
+    }
+}
+
+- (bool)settingsFileExist {
+    return [[NSFileManager defaultManager] fileExistsAtPath:[self getSettingsFilePath] isDirectory:FALSE];
+}
+
+- (NSString *)getSettingsDirectoryPath {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+    return [NSString stringWithFormat:@"%@/OSXDropletManager", [paths objectAtIndex:0]];
+}
+
+- (NSString *)getSettingsFilePath {
+    return [NSString stringWithFormat:@"%@/settings", [self getSettingsDirectoryPath]];
 }
 
 - (void)setVariablesFromPreferences {
     clientId = [self.ClientIDTextField stringValue];
     apiKey = [self.APIKeyTextField stringValue];
-    updateDropletInterval = [self.checkServerTimeSlider doubleValue];
-    updatePingInterval = [self.checkPingTimeSlider doubleValue];
+    updateDropletInterval = [self.checkServerTimeSlider doubleValue] * 60;
+    updatePingInterval = [self.checkPingTimeSlider doubleValue] * 60;
 }
 
 - (void)initialiseWithNewPreferences {

@@ -19,6 +19,7 @@
 @property (readonly) NSInteger regionId;
 @property (readonly) BOOL backupsActive;
 @property (readonly) NSString *ipAddress;
+@property (readonly) NSString *privateIp;
 @property (readonly) BOOL locked;
 @property (readonly) NSString* status;
 
