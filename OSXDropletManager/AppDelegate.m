@@ -106,30 +106,34 @@
 // Prefernces Window //
 //////////////////////
 
-- (IBAction)serverSliderValueChanged:(id)sender { // max 720 = 12 hours
-    NSInteger val = [sender integerValue];
-    if (val < 60) {
-        self.checkServerTimeLabel.stringValue = [NSString stringWithFormat:@"%ld minutes", [sender integerValue]];
+- (IBAction)serverSliderValueChanged:(id)sender { // max 144 (every 5 minutes) = 720 (144 * 5) = 12 hours
+    NSInteger noOfMinutes = [sender integerValue] * 5;
+    if (noOfMinutes == 0) {
+        self.checkServerTimeLabel.stringValue = [NSString stringWithFormat:@"Disabled."];
+    } else if (noOfMinutes < 60) {
+        self.checkServerTimeLabel.stringValue = [NSString stringWithFormat:@"%ld minutes", noOfMinutes];
     } else {
-        double hours = floor(val / 60);
-        if (val - hours * 60 == 0) {
+        double hours = floor(noOfMinutes / 60);
+        if (noOfMinutes - hours * 60 == 0) {
             self.checkServerTimeLabel.stringValue = [NSString stringWithFormat:@"%.0f hours", hours];
         } else {
-            self.checkServerTimeLabel.stringValue = [NSString stringWithFormat:@"%.0f hours & %.0f minutes", hours, val - (hours * 60)];
+            self.checkServerTimeLabel.stringValue = [NSString stringWithFormat:@"%.0f hours & %.0f minutes", hours, noOfMinutes - (hours * 60)];
         }
     }
 }
 
-- (IBAction)pingSliderValueChanged:(id)sender { // max 120 = 2 hours
-    NSInteger val = [sender integerValue];
-    if (val < 60) {
-        self.checkPingTimeLabel.stringValue = [NSString stringWithFormat:@"%ld minutes", [sender integerValue]];
+- (IBAction)pingSliderValueChanged:(id)sender { // max 24 (every 5 minutes) = 120 (24 * 5) = 2 hours
+    NSInteger noOfMinutes = [sender integerValue] * 5;
+    if (noOfMinutes == 0) {
+        self.checkPingTimeLabel.stringValue = [NSString stringWithFormat:@"Disabled."];
+    } else if (noOfMinutes < 60) {
+        self.checkPingTimeLabel.stringValue = [NSString stringWithFormat:@"%ld minutes", noOfMinutes];
     } else {
-        double hours = floor(val / 60);
-        if (val - hours * 60 == 0) {
+        double hours = floor(noOfMinutes / 60);
+        if (noOfMinutes - hours * 60 == 0) {
             self.checkPingTimeLabel.stringValue = [NSString stringWithFormat:@"%.0f hours", hours];
         } else {
-            self.checkPingTimeLabel.stringValue = [NSString stringWithFormat:@"%.0f hours & %.0f minutes", hours, val - (hours * 60)];
+            self.checkPingTimeLabel.stringValue = [NSString stringWithFormat:@"%.0f hours & %.0f minutes", hours, noOfMinutes - (hours * 60)];
         }
     }
 }
@@ -144,8 +148,8 @@
     [self setVariablesFromPreferences];
     
     NSDictionary *settings = [NSDictionary dictionaryWithObjectsAndKeys:
-                              [NSNumber numberWithDouble:[self.checkServerTimeSlider doubleValue]],@"DropletsInterval",
-                              [NSNumber numberWithDouble:[self.checkPingTimeSlider doubleValue]],@"PingInterval",
+                              [NSNumber numberWithDouble:[self.checkServerTimeSlider doubleValue] * 5],@"DropletsInterval",
+                              [NSNumber numberWithDouble:[self.checkPingTimeSlider doubleValue] * 5],@"PingInterval",
                               [NSString stringWithString:[self.ClientIDTextField stringValue]],@"clientID",
                               [NSString stringWithString:[self.APIKeyTextField stringValue]],@"apiKey",
                               nil];
@@ -167,9 +171,9 @@
     if ([self settingsFileExist]) {
         NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:[self getSettingsFilePath]];
         
-        [self.checkServerTimeSlider setDoubleValue:[[settings objectForKey:@"DropletsInterval"] doubleValue]];
+        [self.checkServerTimeSlider setDoubleValue:[[settings objectForKey:@"DropletsInterval"] doubleValue] / 5];
         [self serverSliderValueChanged:self.checkServerTimeSlider];
-        [self.checkPingTimeSlider setDoubleValue:[[settings objectForKey:@"PingInterval"] doubleValue]];
+        [self.checkPingTimeSlider setDoubleValue:[[settings objectForKey:@"PingInterval"] doubleValue] / 5];
         [self pingSliderValueChanged:self.checkPingTimeSlider];
         
         [self.ClientIDTextField setStringValue:[settings objectForKey:@"clientID"]];
@@ -208,8 +212,16 @@
         apiClient = [[DigitalOceanAPIClient alloc] initWithClientID:@"4k1rbNDkuD5nfgnjdwiEY" andApiKey:@"E--VAlAf9qNIKoKyp77IAEXguCjDOKpLbVJb3KAr"];
         
         // Create timers
-        serverUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:updateDropletInterval target:self selector:@selector(refreshServerList) userInfo:nil repeats:YES];
-        pingUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:updatePingInterval target:self selector:@selector(updateServersPing) userInfo:nil repeats:YES];
+        if (updateDropletInterval != 0) {
+            serverUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:updateDropletInterval target:self selector:@selector(refreshServerList) userInfo:nil repeats:YES];
+        } else {
+            [serverUpdateTimer invalidate];
+        }
+        if (updatePingInterval != 0) {
+            pingUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:updatePingInterval target:self selector:@selector(updateServersPing) userInfo:nil repeats:YES];
+        } else {
+            [pingUpdateTimer invalidate];
+        }
         
         [self refreshServerList];
         [self updateServersPing];
